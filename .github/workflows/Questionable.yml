@@ -11,6 +11,11 @@ on:
 
 jobs:
   build:
+      - name: List repository files
+      run: |
+        echo "Listing repo contents..."
+        ls -R .
+
     runs-on: windows-latest
 
     steps:
