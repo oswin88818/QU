@@ -23,10 +23,10 @@ jobs:
         dotnet-version: "9.0.x"
 
     - name: Restore dependencies
-      run: dotnet restore ./Questionable.sln
+      run: dotnet restore ./Questionable-5.23/Questionable.sln
 
     - name: Build (Release, x64)
-      run: dotnet build ./Questionable.sln -c Release -r win-x64 --no-restore
+      run: dotnet build ./Questionable-5.23/Questionable.sln -c Release -r win-x64 --no-restore
 
     - name: Find and Copy Output DLL
       shell: pwsh
@@ -50,7 +50,7 @@ jobs:
             Write-Host "Found latest.zip: $($zip.FullName)"
             Copy-Item $zip.FullName out/
         } else {
-            Write-Host "No latest.zip found — maybe packager is not configured."
+            Write-Host "No latest.zip found — maybe packager not configured."
         }
 
     - name: Upload artifact
