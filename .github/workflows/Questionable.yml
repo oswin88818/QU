@@ -1,0 +1,60 @@
+name: Build Questionable (Dalamud API 12)
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET 9
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: "9.0.x"
+
+    - name: Restore dependencies
+      run: dotnet restore ./Questionable.sln
+
+    - name: Build (Release, x64)
+      run: dotnet build ./Questionable.sln -c Release -r win-x64 --no-restore
+
+    - name: Find and Copy Output DLL
+      shell: pwsh
+      run: |
+        New-Item -ItemType Directory -Force -Path out | Out-Null
+        Write-Host "Searching for Questionable.dll..."
+
+        $dll = Get-ChildItem -Recurse -Filter "Questionable.dll" |
+               Where-Object { $_.FullName -match "bin\\Release" -and $_.FullName -match "net" }
+
+        if ($dll) {
+            Write-Host "Found DLL: $($dll.FullName)"
+            Copy-Item $dll.FullName out/
+        } else {
+            Write-Host "ERROR: Questionable.dll not found!"
+            exit 1
+        }
+
+        $zip = Get-ChildItem -Recurse -Filter "latest.zip"
+        if ($zip) {
+            Write-Host "Found latest.zip: $($zip.FullName)"
+            Copy-Item $zip.FullName out/
+        } else {
+            Write-Host "No latest.zip found — maybe packager is not configured."
+        }
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Questionable-Build
+        path: out
