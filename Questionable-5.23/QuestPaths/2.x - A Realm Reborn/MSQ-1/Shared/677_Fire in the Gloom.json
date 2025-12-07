@@ -1,0 +1,94 @@
+{
+  "$schema": "https://git.carvel.li/liza/Questionable/raw/branch/master/QuestPaths/quest-v1.json",
+  "Author": "liza",
+  "QuestSequence": [
+    {
+      "Sequence": 0,
+      "Steps": [
+        {
+          "DataId": 1000100,
+          "Position": {
+            "X": 23.819275,
+            "Y": -8,
+            "Z": 115.92273
+          },
+          "TerritoryId": 132,
+          "InteractionType": "AcceptQuest"
+        }
+      ]
+    },
+    {
+      "Sequence": 1,
+      "Steps": [
+        {
+          "Position": {
+            "X": 49.65071,
+            "Y": -8.046952,
+            "Z": 102.32186
+          },
+          "TerritoryId": 132,
+          "InteractionType": "WalkTo",
+          "$": "New Gridania Navmesh workaround"
+        },
+        {
+          "TerritoryId": 148,
+          "InteractionType": "AttuneAetheryte",
+          "Aetheryte": "Central Shroud - Bentbranch Meadows",
+          "AethernetShortcut": [
+            "[Gridania] Aetheryte Plaza",
+            "[Gridania] Blue Badger Gate (Central Shroud)"
+          ]
+        },
+        {
+          "DataId": 1004612,
+          "Position": {
+            "X": -114.94629,
+            "Y": -39.702168,
+            "Z": 335.46948
+          },
+          "TerritoryId": 148,
+          "InteractionType": "Interact"
+        }
+      ]
+    },
+    {
+      "Sequence": 2,
+      "Steps": [
+        {
+          "TerritoryId": 148,
+          "InteractionType": "Duty",
+          "DutyOptions": {
+            "ContentFinderConditionId": 2,
+            "Enabled": true
+          }
+        }
+      ]
+    },
+    {
+      "Sequence": 255,
+      "Steps": [
+        {
+          "Position": {
+            "X": 49.65071,
+            "Y": -8.046952,
+            "Z": 102.32186
+          },
+          "TerritoryId": 132,
+          "InteractionType": "WalkTo",
+          "$": "New Gridania Navmesh workaround",
+          "AetheryteShortcut": "Gridania"
+        },
+        {
+          "DataId": 1000100,
+          "Position": {
+            "X": 23.819275,
+            "Y": -8,
+            "Z": 115.92273
+          },
+          "TerritoryId": 132,
+          "InteractionType": "CompleteQuest"
+        }
+      ]
+    }
+  ]
+}
