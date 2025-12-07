@@ -1,10 +1,7 @@
-name: Build Questionable (Dalamud API 12)
+name: Build Questionable (API12)
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
     branches:
       - main
   workflow_dispatch:
@@ -14,47 +11,38 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup .NET 9
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: "9.0.x"
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
 
-    - name: Restore dependencies
-      run: dotnet restore ./Questionable-5.23/Questionable.sln
+      - name: List repository files
+        run: |
+          echo "=== Repo Structure ==="
+          dir .
 
-    - name: Build (Release, x64)
-      run: dotnet build ./Questionable-5.23/Questionable.sln -c Release -r win-x64 --no-restore
+      - name: Restore dependencies
+        run: dotnet restore "./Questionable-5.23/Questionable.sln"
 
-    - name: Find and Copy Output DLL
-      shell: pwsh
-      run: |
-        New-Item -ItemType Directory -Force -Path out | Out-Null
-        Write-Host "Searching for Questionable.dll..."
+      - name: Build solution
+        run: dotnet build "./Questionable-5.23/Questionable.sln" -c Release --no-restore
 
-        $dll = Get-ChildItem -Recurse -Filter "Questionable.dll" |
-               Where-Object { $_.FullName -match "bin\\Release" -and $_.FullName -match "net" }
+      - name: Publish plugin dll
+        run: |
+          mkdir output
+          copy "./Questionable-5.23/Questionable/bin/Release/net8.0/*.dll" "./output/"
 
-        if ($dll) {
-            Write-Host "Found DLL: $($dll.FullName)"
-            Copy-Item $dll.FullName out/
-        } else {
-            Write-Host "ERROR: Questionable.dll not found!"
-            exit 1
-        }
+      - name: Create ZIP package
+        run: |
+          powershell Compress-Archive -Path "./output/*" -DestinationPath "./Questionable.zip"
 
-        $zip = Get-ChildItem -Recurse -Filter "latest.zip"
-        if ($zip) {
-            Write-Host "Found latest.zip: $($zip.FullName)"
-            Copy-Item $zip.FullName out/
-        } else {
-            Write-Host "No latest.zip found — maybe packager not configured."
-        }
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: Questionable-Build
-        path: out
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Questionable
+          path: |
+            ./output/
+            ./Questionable.zip
